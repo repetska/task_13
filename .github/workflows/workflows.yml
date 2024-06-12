@@ -1,0 +1,38 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main  # Тригер на пуш у гілку main
+  workflow_dispatch:  # Ручний тригер
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+
+    - name: Install Maven
+      run: sudo apt-get install -y maven
+
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Run unit tests
+      run: mvn test
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "CI: Automated build and test results."
+        git push
+
