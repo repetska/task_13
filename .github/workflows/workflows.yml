@@ -29,11 +29,16 @@ jobs:
     - name: Run unit tests
       run: mvn test
 
+    - name: Check for changes
+      id: check_changes
+      run: |
+        git diff-index --quiet HEAD || echo "Changes found"
+      
     - name: Commit and push changes
+      if: steps.check_changes.outputs.result == 'Changes found'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "CI: Automated build and test results."
         git push
-
